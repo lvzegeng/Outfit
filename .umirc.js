@@ -8,7 +8,7 @@ export default {
     ['umi-plugin-react', {
       antd: true,
       dva: true,
-      dynamicImport: true,
+      dynamicImport: false, // 设为 true 会导致 css 热加载无效
       title: 'electron-',
       dll: true,
       routes: {
