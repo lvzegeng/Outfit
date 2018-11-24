@@ -1,11 +1,24 @@
 {
+  "name": "electron-react-boilerplate",
+  "productName": "ElectronReact",
+  "version": "0.16.0",
+  "description":
+    "Electron application boilerplate based on React, React Router, Webpack, React Hot Loader for rapid application development",
   "private": true,
+  "main": "src/main/index.js",
   "scripts": {
-    "start": "umi dev",
     "build": "umi build",
-    "test": "umi test",
-    "lint": "eslint --ext .js src mock tests",
-    "precommit": "lint-staged"
+    "dev": "concurrently \"yarn start-renderer-dev\" \"yarn start-main-dev\"",
+    "package": "yarn build && electron-builder build --publish never",
+    "package-all": "yarn build && electron-builder build -mwl",
+    "package-ci": "yarn postinstall && yarn build && electron-builder --publish always",
+    "package-linux": "yarn build && electron-builder build --linux",
+    "package-win": "yarn build && electron-builder build --win --x64",
+    "postinstall": "electron-builder install-app-deps package.json",
+    "precommit": "lint-staged",
+    "start-main-dev":
+      "cross-env HOT=1 NODE_ENV=development electron -r babel-register ./src/main/index.js",
+    "start-renderer-dev": "umi dev"
   },
   "devDependencies": {
     "babel-eslint": "^9.0.0",
@@ -18,12 +31,62 @@
     "husky": "^0.14.3",
     "lint-staged": "^7.2.2",
     "umi": "^2.1.2",
-    "umi-plugin-react": "^1.1.1"
+    "umi-plugin-react": "^1.1.1",
+    "cross-env": "^5.2.0",
+    "electron": "^3.0.6",
+    "electron-builder": "^20.26.0",
+    "electron-devtools-installer": "^2.2.4",
+    "electron-rebuild": "^1.8.2",
+    "spectron": "^3.8.0",
+    "concurrently": "^3.6.1"
   },
+  "dependencies": {
+    "devtron": "^1.4.0",
+    "electron-debug": "^2.0.0",
+    "source-map-support": "^0.5.6"
+  },
+  "browserslist": "electron 1.6",
   "lint-staged": {
     "*.{js,jsx}": ["eslint --fix", "git add"]
   },
+  "build": {
+    "productName": "ElectronReact",
+    "appId": "org.develar.ElectronReact",
+    "files": ["dist/", "node_modules/", "src/main/", "package.json"],
+    "dmg": {
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "win": {
+      "target": ["nsis", "msi"]
+    },
+    "linux": {
+      "target": ["deb", "rpm", "snap", "AppImage"],
+      "category": "Development"
+    },
+    "directories": {
+      "buildResources": "resources",
+      "output": "release"
+    }
+  },
+  "author": {
+    "name": "Electron React Boilerplte Maintainers",
+    "email": "electronreactboilerplate@gmail.com",
+    "url": "https://electron-react-boilerplate.js.org"
+  },
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=8.0.0",
+    "npm": ">=4.x",
+    "yarn": ">=0.21.3"
   }
 }
