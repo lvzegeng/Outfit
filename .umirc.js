@@ -1,3 +1,4 @@
+import { resolve } from 'path';
 
 // ref: https://umijs.org/config/
 export default {
@@ -12,12 +13,24 @@ export default {
       title: 'electron-',
       dll: true,
       routes: {
-        exclude: [],
+        exclude: [/model\.(j|t)sx?$/, /components\.(j|t)sx?$/, /service\.(j|t)sx?$/, /models\//, /components\//, /services\//],
       },
       hardSource: true,
     }],
   ],
   chainWebpack(config, { webpack }) {
     config.target('electron-renderer');
+  },
+  alias: {
+    '@components': resolve(__dirname, 'src/components'),
+    '@utils': resolve(__dirname, 'src/utils'),
+    '@assets': resolve(__dirname, 'src/assets'),
+  },
+  proxy: {
+    "/collocation": {
+      "target": "https://xcx.nanyibang.com/",
+      "changeOrigin": true,
+      // "pathRewrite": { "^/collocation" : "" }
+    }
   },
 };

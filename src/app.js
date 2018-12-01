@@ -1,11 +1,10 @@
-
+import { message } from 'antd';
 
 export const dva = {
   config: {
-    onError(err) {
-      err.preventDefault();
-      console.error(err.message);
+    onError(e) {
+      e.preventDefault();
+      message.error(err.message);
     },
   },
 };
-
