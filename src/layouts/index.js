@@ -9,7 +9,6 @@ document.body.addEventListener('click', e => {
     if (href && href.startsWith('http')) {
       e.preventDefault();
       shell.openExternal(href);
-      console.log(href);
     }
   }
 });
