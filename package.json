@@ -14,10 +14,9 @@
     "package-ci": "yarn postinstall && yarn build && electron-builder --publish always",
     "package-linux": "yarn build && electron-builder build --linux",
     "package-win": "yarn build && electron-builder build --win --x64",
-    "postinstall": "electron-builder install-app-deps package.json",
-    "precommit": "lint-staged",
+    "postinstall": "electron-builder install-app-deps",
     "start-main-dev":
-      "cross-env HOT=1 NODE_ENV=development electron -r babel-register ./src/main/index.js",
+      "cross-env HOT=1 NODE_ENV=development electron -r babel-register .",
     "start-renderer-dev": "umi dev"
   },
   "devDependencies": {
@@ -42,8 +41,8 @@
   },
   "dependencies": {
     "devtron": "^1.4.0",
-    "electron-debug": "^2.0.0",
-    "source-map-support": "^0.5.6"
+    "source-map-support": "^0.5.6",
+    "electron-updater": "^4.0.5"
   },
   "browserslist": "electron 1.6",
   "lint-staged": {
@@ -53,6 +52,12 @@
     "productName": "ElectronReact",
     "appId": "org.develar.ElectronReact",
     "files": ["dist/", "node_modules/", "src/main/", "package.json"],
+    "publish": [
+      {
+        "provider": "generic",
+        "url": "http://172.26.27.17:5000"
+      }
+    ],
     "dmg": {
       "contents": [
         {
