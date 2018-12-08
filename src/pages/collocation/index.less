@@ -1,12 +1,25 @@
+.classic {
+  line-height: 3em;
+  margin-left: 1em;
+}
+
 .container {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(var(--grid), 1fr);
   text-align: center;
 
   .item {
     border-right: 1px solid #999999;
     border-bottom: 1px solid #999999;
-    padding: 3rem 0;
+    padding: 10% 0;
     cursor: pointer;
+
+    img {
+      width: 80%;
+    }
+
+    .name {
+      margin-top: 1em;
+    }
   }
 }

@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
+import { Spin } from 'antd';
 import { connect } from 'dva';
 import router from 'umi/router';
 import styles from './index.less';
 
-@connect(({ collocation }) => ({ collocation }))
+@connect(({ collocation, loading }) => ({ collocation, loading }))
 class Index extends Component {
   componentDidMount() {
     const { classifications } = this.props.collocation;
@@ -18,9 +19,11 @@ class Index extends Component {
 
   render() {
     const { classifications } = this.props.collocation;
+    const loading = this.props.loading.effects['collocation/getClassifications'];
+
     return (
-      <div>
-        <div>搭配分类 | CLASSIC</div>
+      <Spin spinning={loading}>
+        <div className={styles.classic}>搭配分类 | CLASSIC</div>
         <div className={styles.container}>
           {classifications.map(item => (
             <div
@@ -29,11 +32,11 @@ class Index extends Component {
               className={styles.item}
             >
               <img src={item.style_icon} alt="" />
-              <div>{item.collocation_style_name}</div>
+              <div className={styles.name}>{item.collocation_style_name}</div>
             </div>
           ))}
         </div>
-      </div>
+      </Spin>
     );
   }
 }

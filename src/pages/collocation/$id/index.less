@@ -1,25 +1,30 @@
 .sort {
   display: flex;
-  line-height: 3em;
+  margin-bottom: 0.5em;
+  margin-left: 1em;
   div {
     cursor: pointer;
     margin-right: 2em;
     &.select {
-      color: red;
+      color: var(--primary-color);
     }
   }
 }
 
 .container {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(var(--grid), 1fr);
   grid-gap: 30px;
+  align-items: end;
   text-align: center;
 
   .item {
     cursor: pointer;
     img {
       width: 100%;
+    }
+    .info {
+      margin-top: 1em;
     }
   }
 }

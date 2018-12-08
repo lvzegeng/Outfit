@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Spin } from 'antd';
 import { connect } from 'dva';
-import styles from './index.less';
 import router from 'umi/router';
+import styles from './index.less';
 
 @connect(({ collocation, loading }) => ({ collocation, loading }))
 class index extends Component {
@@ -44,7 +44,7 @@ class index extends Component {
     const { current_page, last_page, orderBy } = this.props.collocation.classificationsList;
     const loading = this.props.loading.effects['collocation/getClassificationsList'];
     if (
-      body.scrollHeight - window.scrollY - body.clientHeight < 300 &&
+      body.scrollHeight - window.scrollY - body.clientHeight < 500 &&
       current_page < last_page &&
       !loading
     ) {
@@ -55,8 +55,8 @@ class index extends Component {
     }
   };
 
-  toInfo = id => {
-    router.push(`${this.props.location.pathname}/${id}`);
+  toInfo = record => {
+    router.push(`${this.props.location.pathname}/${record.collocation_id}?img=${record.big_image}`);
   };
 
   render() {
@@ -93,12 +93,12 @@ class index extends Component {
         <div className={styles.container}>
           {data.map(item => (
             <div
-              onClick={this.toInfo.bind(this, item.collocation_id)}
+              onClick={this.toInfo.bind(this, item)}
               key={item.collocation_id}
               className={styles.item}
             >
               <img src={item.big_image} alt="" />
-              <div>{item.info}</div>
+              <div className={styles.info}>{item.info}</div>
             </div>
           ))}
         </div>

@@ -1,8 +1,20 @@
+@media (min-width: 1000px) {
+  :root body {
+    --grid: 4;
+  }
+}
 
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
 }
 
 body {
   margin: 0;
+}
+
+:root {
+  --grid: 3;
+  --primary-color: #1890ff;
 }
