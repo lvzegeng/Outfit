@@ -56,8 +56,10 @@ class index extends Component {
     }
   };
 
-  toInfo = record => {
-    router.push(`${this.props.location.pathname}/${record.collocation_id}?img=${record.big_image}`);
+  toInfo = (record, e) => {
+    if(e.target.nodeName === 'DIV' || e.target.nodeName === 'IMG'){
+      router.push(`${this.props.location.pathname}/${record.collocation_id}?img=${record.big_image}`);
+    }
   };
 
   render() {

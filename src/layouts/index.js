@@ -21,9 +21,9 @@ function BasicLayout(props) {
   return (
     <div>
       {pathname !== '/collocation' && (
-        <div onClick={goBack} className={styles.goBack}>
+        <span onClick={goBack} className={styles.goBack}>
           <Icon type="arrow-left" />返回
-        </div>
+        </span>
       )}
       {props.children}
     </div>

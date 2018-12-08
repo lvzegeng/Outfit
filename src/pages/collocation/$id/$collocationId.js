@@ -25,7 +25,7 @@ class $CollocationId extends Component {
     return (
       <Spin spinning={loading}>
         <div className={styles.container}>
-          <ImgAddTool className={styles.bigContainer} img={img} id={collocationId} />
+          <ImgAddTool className={styles.bigContainer} img={img} id={Number.parseFloat(collocationId)} />
           {classificationsItem.map(item => (
             <div key={item.item_id}>
               <img className={styles.img} src={item.pic_url} alt="" />
