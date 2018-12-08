@@ -3,6 +3,7 @@ import { Spin } from 'antd';
 import { connect } from 'dva';
 import router from 'umi/router';
 import styles from './index.less';
+import ImgAddTool from '../../../components/ImgAddTool';
 
 @connect(({ collocation, loading }) => ({ collocation, loading }))
 class index extends Component {
@@ -97,7 +98,7 @@ class index extends Component {
               key={item.collocation_id}
               className={styles.item}
             >
-              <img src={item.big_image} alt="" />
+              <ImgAddTool img={item.big_image} id={item.collocation_id} />
               <div className={styles.info}>{item.info}</div>
             </div>
           ))}
