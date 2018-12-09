@@ -8,6 +8,9 @@ import styles from './ImgAddTool.less';
 class ImgAddTool extends Component {
   state = {
     star: JSON.parse(localStorage.getItem('star') || '[]').includes(this.props.id),
+    download: JSON.parse(localStorage.getItem('download') || '[]').includes(
+      this.props.img.split('/').pop()
+    ),
   };
 
   imagesFolder = path.join(app.getPath('userData'), 'images');
@@ -52,24 +55,44 @@ class ImgAddTool extends Component {
           if (err) {
             message.error(err);
           } else {
+            const download = JSON.parse(localStorage.getItem('download') || '[]');
+            localStorage.setItem('download', JSON.stringify(download.concat(img.split('/').pop())));
+            this.setState({
+              download: true,
+            });
             message.success('图片保存成功');
           }
         });
       });
   };
 
+  handleOpenFolder = e => {
+    e.preventDefault();
+    e.currentTarget.parentNode.click();
+  };
+
   render() {
     const { className, img } = this.props;
-    const { star } = this.state;
+    const { star, download } = this.state;
     return (
       <div className={className}>
         <img className={styles.img} src={img} alt="" />
         <div className={styles.tool}>
-          <Icon
-            type="download"
-            onClick={this.download.bind(this, img)}
-            className={styles.download}
-          />
+          {download ? (
+            <a href={path.join(this.imagesFolder, img.split('/').pop())}>
+              <Icon
+                type="folder-open"
+                className={styles.download}
+                onClick={this.handleOpenFolder}
+              />
+            </a>
+          ) : (
+            <Icon
+              type="download"
+              onClick={this.download.bind(this, img)}
+              className={styles.download}
+            />
+          )}
           {star ? (
             <Icon type="star" theme="filled" onClick={this.star} className={styles.active} />
           ) : (
