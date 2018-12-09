@@ -7,7 +7,9 @@ import styles from './ImgAddTool.less';
 
 class ImgAddTool extends Component {
   state = {
-    star: JSON.parse(localStorage.getItem('star') || '[]').includes(this.props.id),
+    star: !!JSON.parse(localStorage.getItem('star') || '[]').find(
+      item => item.id === this.props.id
+    ),
     download: JSON.parse(localStorage.getItem('download') || '[]').includes(
       this.props.img.split('/').pop()
     ),
@@ -17,14 +19,22 @@ class ImgAddTool extends Component {
 
   star = e => {
     const star = JSON.parse(localStorage.getItem('star') || '[]');
-    const { id } = this.props;
-    if (!star.includes(id)) {
-      localStorage.setItem('star', JSON.stringify(star.concat(id)));
+    const { id, img } = this.props;
+    if (!star.find(item => item.id === id)) {
+      localStorage.setItem(
+        'star',
+        JSON.stringify(
+          star.concat({
+            id,
+            img,
+          })
+        )
+      );
       this.setState({
         star: true,
       });
     } else {
-      localStorage.setItem('star', JSON.stringify(star.filter(item => item !== id)));
+      localStorage.setItem('star', JSON.stringify(star.filter(item => item.id !== id)));
       this.setState({
         star: false,
       });
@@ -84,6 +94,7 @@ class ImgAddTool extends Component {
                 type="folder-open"
                 className={styles.download}
                 onClick={this.handleOpenFolder}
+                title="打开文件位置"
               />
             </a>
           ) : (
@@ -91,12 +102,19 @@ class ImgAddTool extends Component {
               type="download"
               onClick={this.download.bind(this, img)}
               className={styles.download}
+              title="下载图片"
             />
           )}
           {star ? (
-            <Icon type="star" theme="filled" onClick={this.star} className={styles.active} />
+            <Icon
+              type="star"
+              theme="filled"
+              onClick={this.star}
+              className={styles.active}
+              title="取消收藏"
+            />
           ) : (
-            <Icon type="star" onClick={this.star} className={styles.star} />
+            <Icon type="star" onClick={this.star} className={styles.star} title="收藏" />
           )}
         </div>
       </div>

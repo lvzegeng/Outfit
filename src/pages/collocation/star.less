@@ -1,0 +1,17 @@
+.container {
+  display: grid;
+  grid-template-columns: repeat(var(--grid), 1fr);
+  grid-gap: 30px;
+  align-items: end;
+  text-align: center;
+
+  .item {
+    cursor: pointer;
+    img {
+      width: 100%;
+    }
+    .info {
+      margin-top: 1em;
+    }
+  }
+}

@@ -57,8 +57,10 @@ class index extends Component {
   };
 
   toInfo = (record, e) => {
-    if(e.target.nodeName === 'DIV' || e.target.nodeName === 'IMG'){
-      router.push(`${this.props.location.pathname}/${record.collocation_id}?img=${record.big_image}`);
+    if (e.target.nodeName === 'DIV' || e.target.nodeName === 'IMG') {
+      router.push(
+        `${this.props.location.pathname}/${record.collocation_id}?img=${record.big_image}`
+      );
     }
   };
 
@@ -69,25 +71,25 @@ class index extends Component {
       <Spin spinning={loading}>
         <div className={styles.sort}>
           <div
-            className={orderBy === 'recommend' && styles.select}
+            className={orderBy === 'recommend' ? styles.select : ''}
             onClick={this.clickSort.bind(this, 'recommend')}
           >
             推荐
           </div>
           <div
-            className={orderBy === 'priceLower' && styles.select}
+            className={orderBy === 'priceLower' ? styles.select : ''}
             onClick={this.clickSort.bind(this, 'priceLower')}
           >
             最低
           </div>
           <div
-            className={orderBy === 'priceHigher' && styles.select}
+            className={orderBy === 'priceHigher' ? styles.select : ''}
             onClick={this.clickSort.bind(this, 'priceHigher')}
           >
             最高
           </div>
           <div
-            className={orderBy === 'hot' && styles.select}
+            className={orderBy === 'hot' ? styles.select : ''}
             onClick={this.clickSort.bind(this, 'hot')}
           >
             最热

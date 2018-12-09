@@ -7,13 +7,20 @@ function BasicLayout(props) {
   const goBack = () => {
     router.goBack();
   };
+  const gotoStar = () => {
+    router.push('/collocation/star');
+  };
   return (
     <div>
-      {pathname !== '/collocation' && (
-        <span onClick={goBack} className={styles.goBack}>
-          <Icon type="arrow-left" />返回
-        </span>
-      )}
+      <div className={styles.topBar}>
+        {pathname !== '/collocation' && (
+          <span onClick={goBack} className={styles.goBack}>
+            <Icon type="arrow-left" title="返回" />
+          </span>
+        )}
+        <div className={styles.flex} />
+        <Icon onClick={gotoStar} type="star" theme="filled" className={styles.star} title="收藏" />
+      </div>
       {props.children}
     </div>
   );
