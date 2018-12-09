@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Icon, message } from 'antd';
+const { clipboard, nativeImage } = require('electron');
 const { app } = require('electron').remote;
 import fs from 'fs';
 import path from 'path';
@@ -17,7 +18,7 @@ class ImgAddTool extends Component {
 
   imagesFolder = path.join(app.getPath('userData'), 'images');
 
-  star = e => {
+  star = () => {
     const star = JSON.parse(localStorage.getItem('star') || '[]');
     const { id, img } = this.props;
     if (!star.find(item => item.id === id)) {
@@ -41,7 +42,18 @@ class ImgAddTool extends Component {
     }
   };
 
-  download = img => {
+  copy = () => {
+    const { img } = this.props;
+    fetch(img)
+      .then(data => data.arrayBuffer())
+      .then(data => {
+        clipboard.writeImage(nativeImage.createFromBuffer(new Buffer(data)));
+        message.success('图片复制成功');
+      });
+  };
+
+  download = () => {
+    const { img } = this.props;
     fs.stat(this.imagesFolder, (err, stats) => {
       if (err) {
         fs.mkdir(this.imagesFolder, err => {
@@ -100,7 +112,7 @@ class ImgAddTool extends Component {
           ) : (
             <Icon
               type="download"
-              onClick={this.download.bind(this, img)}
+              onClick={this.download}
               className={styles.download}
               title="下载图片"
             />
@@ -116,6 +128,7 @@ class ImgAddTool extends Component {
           ) : (
             <Icon type="star" onClick={this.star} className={styles.star} title="收藏" />
           )}
+          <Icon type="copy" onClick={this.copy} className={styles.copy} title="复制" />
         </div>
       </div>
     );

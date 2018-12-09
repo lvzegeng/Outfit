@@ -18,7 +18,7 @@ if (!gotTheLock) {
   app.on('second-instance', (event, commandLine, workingDirectory) => {
     if (mainWindow) {
       if (mainWindow.isMinimized()) {
-        mainWindow.restore();
+        mainWindow.restore(); // 将窗口从最小化状态恢复到以前的状态
       }
       if (!mainWindow.isVisible()) {
         mainWindow.show();
@@ -34,10 +34,10 @@ function init() {
     const sourceMapSupport = require('source-map-support');
     sourceMapSupport.install();
 
-    // 在登录时启动应用，通过 process.argv.includes(item==='--hidden') 判断是否隐藏窗口
+    // 在登录时启动应用，通过 process.argv.includes(item=>item==='hidden') 判断是否隐藏窗口
     app.setLoginItemSettings({
       openAtLogin: true,
-      args: [`--hidden`],
+      args: [`hidden`],
     });
   }
 
@@ -59,7 +59,9 @@ function init() {
     mainWindow.loadURL(fileUrl);
 
     mainWindow.once('ready-to-show', () => {
-      mainWindow.show();
+      if (!process.argv.includes(item => item === 'hidden')) {
+        mainWindow.show();
+      }
       mainWindow.focus();
       if (process.env.NODE_ENV === 'development') {
         mainWindow.webContents.openDevTools();
@@ -69,6 +71,12 @@ function init() {
       setTray();
       // 检查更新
       checkForUpdate();
+    });
+
+    // 在窗口要关闭的时候触发，可以把关闭窗口改为隐藏窗口，所以关闭窗口只能使用 mainWindow.destroy()
+    mainWindow.on('close', e => {
+      // e.preventDefault();
+      // mainWindow.hide()
     });
 
     mainWindow.on('closed', () => {
@@ -114,9 +122,7 @@ const setTray = () => {
 
 const checkForUpdate = () => {
   // 当开始检查更新的时候触发
-  autoUpdater.on('checking-for-update', () => {
-
-  });
+  autoUpdater.on('checking-for-update', () => {});
   // 有可用更新时发出
   autoUpdater.on('update-available', info => {
     /*dialog.showMessageBox({
@@ -125,9 +131,7 @@ const checkForUpdate = () => {
     });*/
   });
   // 没有可用更新时发出
-  autoUpdater.on('update-not-available', info => {
-
-  });
+  autoUpdater.on('update-not-available', info => {});
   // 当更新发生错误的时候触发
   autoUpdater.on('error', error => {
     // 去掉任务栏的进度条
@@ -135,7 +139,17 @@ const checkForUpdate = () => {
   });
   // 更新进度
   autoUpdater.on('download-progress', function(progressObj) {
-    let log_message = 'Download speed: ' + progressObj.bytesPerSecond + ' - Downloaded ' + progressObj.percent + '%' + ' (' + progressObj.transferred + '/' + progressObj.total + ')';
+    let log_message =
+      'Download speed: ' +
+      progressObj.bytesPerSecond +
+      ' - Downloaded ' +
+      progressObj.percent +
+      '%' +
+      ' (' +
+      progressObj.transferred +
+      '/' +
+      progressObj.total +
+      ')';
     // 下载进度显示在任务栏的进度条
     mainWindow.setProgressBar(progressObj.percent / 100);
   });
