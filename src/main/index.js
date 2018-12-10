@@ -55,7 +55,7 @@ function init() {
     mainWindow.loadURL(fileUrl);
 
     mainWindow.once('ready-to-show', () => {
-      if (!process.argv.includes(item => item === 'hidden')) {
+      if (!process.argv.includes('--hidden')) {
         mainWindow.show();
       }
       mainWindow.focus();
@@ -64,10 +64,10 @@ function init() {
         mainWindow.webContents.openDevTools();
         require('devtron').install();
       } else if (process.env.NODE_ENV === 'production') {
-        // 在登录时启动应用，通过 process.argv.includes(item=>item==='hidden') 判断是否隐藏窗口
+        // 在登录时启动应用，通过 process.argv.includes('--hidden') 判断是否隐藏窗口
         app.setLoginItemSettings({
           openAtLogin: true,
-          args: ['hidden'],
+          args: ['--hidden'],
         });
         checkForUpdate(); // 检查更新
       }
