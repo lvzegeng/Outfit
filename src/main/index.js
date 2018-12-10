@@ -31,7 +31,7 @@ if (!gotTheLock) {
 }
 
 function init() {
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV !== 'development') {
     const sourceMapSupport = require('source-map-support');
     sourceMapSupport.install();
   }
@@ -63,7 +63,7 @@ function init() {
       if (process.env.NODE_ENV === 'development') {
         mainWindow.webContents.openDevTools();
         require('devtron').install();
-      } else if (process.env.NODE_ENV === 'production') {
+      } else {
         // 在登录时启动应用，通过 process.argv.includes('--hidden') 判断是否隐藏窗口
         app.setLoginItemSettings({
           openAtLogin: true,
