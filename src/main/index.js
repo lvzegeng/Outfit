@@ -15,10 +15,11 @@ const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
   app.quit();
 } else {
-  app.on('second-instance', (event, commandLine, workingDirectory) => {
+  app.on('second-instance', (event, argv, workingDirectory) => {
     if (mainWindow) {
+      // 将窗口从最小化状态恢复到以前的状态
       if (mainWindow.isMinimized()) {
-        mainWindow.restore(); // 将窗口从最小化状态恢复到以前的状态
+        mainWindow.restore();
       }
       if (!mainWindow.isVisible()) {
         mainWindow.show();
@@ -33,19 +34,14 @@ function init() {
   if (process.env.NODE_ENV === 'production') {
     const sourceMapSupport = require('source-map-support');
     sourceMapSupport.install();
-
-    // 在登录时启动应用，通过 process.argv.includes(item=>item==='hidden') 判断是否隐藏窗口
-    app.setLoginItemSettings({
-      openAtLogin: true,
-      args: [`hidden`],
-    });
   }
 
   app.on('ready', () => {
     mainWindow = new BrowserWindow({
-      show: false,
       width: 1024,
       height: 725,
+      show: false,
+      webPreferences: { webSecurity: false }, // 禁用同源策略
     });
 
     const fileUrl =
@@ -63,17 +59,21 @@ function init() {
         mainWindow.show();
       }
       mainWindow.focus();
+      setTray(); // 添加图标和上下文菜单到系统通知区
       if (process.env.NODE_ENV === 'development') {
         mainWindow.webContents.openDevTools();
         require('devtron').install();
+      } else if (process.env.NODE_ENV === 'production') {
+        // 在登录时启动应用，通过 process.argv.includes(item=>item==='hidden') 判断是否隐藏窗口
+        app.setLoginItemSettings({
+          openAtLogin: true,
+          args: ['hidden'],
+        });
+        checkForUpdate(); // 检查更新
       }
-      // 添加图标和上下文菜单到系统通知区
-      setTray();
-      // 检查更新
-      checkForUpdate();
     });
 
-    // 在窗口要关闭的时候触发，可以把关闭窗口改为隐藏窗口，所以关闭窗口只能使用 mainWindow.destroy()
+    // 在窗口要关闭的时候触发，可以把关闭窗口改为隐藏窗口，所以关闭窗口只能使用 mainWindow.destroy(), app.exit()
     mainWindow.on('close', e => {
       // e.preventDefault();
       // mainWindow.hide()
@@ -96,7 +96,7 @@ function init() {
   });
 
   app.on('activate', () => {
-    // 在macOS上，当单击dock图标并且没有其他窗口打开时，通常在应用程序中重新创建一个窗口，重新执行 ready
+    // 在macOS上，当单击dock图标并且没有其他窗口打开时，通常在应用程序中重新创建一个窗口，重新执行 ready 事件的方法
     if (win === null) {
       // createWindow();
     }
@@ -116,7 +116,7 @@ const setTray = () => {
   tray.on('click', () => {
     mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
   });
-  tray.setToolTip(`${app.getName()}  ${app.getVersion()}`);
+  tray.setToolTip(`${app.getName()}  ${app.getVersion()}`); // 应用程序的名称  版本
   tray.setContextMenu(contextMenu);
 };
 
@@ -134,11 +134,10 @@ const checkForUpdate = () => {
   autoUpdater.on('update-not-available', info => {});
   // 当更新发生错误的时候触发
   autoUpdater.on('error', error => {
-    // 去掉任务栏的进度条
-    mainWindow.setProgressBar(-1);
+    mainWindow.setProgressBar(-1); // 去掉任务栏的进度条
   });
   // 更新进度
-  autoUpdater.on('download-progress', function(progressObj) {
+  autoUpdater.on('download-progress', progressObj => {
     let log_message =
       'Download speed: ' +
       progressObj.bytesPerSecond +
@@ -154,7 +153,7 @@ const checkForUpdate = () => {
     mainWindow.setProgressBar(progressObj.percent / 100);
   });
   // 更新下载完成事件
-  autoUpdater.on('update-downloaded', function(info) {
+  autoUpdater.on('update-downloaded', info => {
     const dialogOpts = {
       type: 'info',
       buttons: ['重启', '稍后'],
@@ -164,8 +163,7 @@ const checkForUpdate = () => {
     dialog.showMessageBox(dialogOpts, response => {
       if (response === 0) autoUpdater.quitAndInstall();
     });
-    // 去掉任务栏的进度条
-    mainWindow.setProgressBar(-1);
+    mainWindow.setProgressBar(-1); // 去掉任务栏的进度条
   });
   // 向服务端查询现在是否有可用的更新
   autoUpdater.checkForUpdatesAndNotify();
