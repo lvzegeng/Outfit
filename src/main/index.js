@@ -1,13 +1,13 @@
 // 除非用webpack编译一下，否则只能用require代替import
-const { app, BrowserWindow, dialog, Tray, Menu } = require('electron');
+const { app, BrowserWindow, dialog, Tray, Menu, shell } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const url = require('url');
 const path = require('path');
-// const MenuBuilder = require('./menu');
 
 // 保持window对象的全局引用，防止 window 在垃圾收集JavaScript对象时自动关闭
 let mainWindow = null;
 let tray = null;
+let rightMenu = null;
 
 // 将此应用设为单个实例应用。当试图启动第二个实例时，主窗口将被恢复并聚焦，而不是打开第二个窗口
 // 不成为单个实例应用程序的话，直接 init()
@@ -31,11 +31,6 @@ if (!gotTheLock) {
 }
 
 function init() {
-  if (process.env.NODE_ENV !== 'development') {
-    const sourceMapSupport = require('source-map-support');
-    sourceMapSupport.install();
-  }
-
   app.on('ready', () => {
     mainWindow = new BrowserWindow({
       width: 1024,
@@ -60,6 +55,9 @@ function init() {
       }
       mainWindow.focus();
       setTray(); // 添加图标和上下文菜单到系统通知区
+      setApplicationMenu();
+      setRightClickMenu();
+
       if (process.env.NODE_ENV === 'development') {
         mainWindow.webContents.openDevTools();
         require('devtron').install();
@@ -82,9 +80,6 @@ function init() {
     mainWindow.on('closed', () => {
       mainWindow = null;
     });
-
-    // const menuBuilder = new MenuBuilder(mainWindow);
-    // menuBuilder.buildMenu();
   });
 
   app.on('window-all-closed', () => {
@@ -120,6 +115,68 @@ const setTray = () => {
   tray.setContextMenu(contextMenu);
 };
 
+const setRightClickMenu = () => {
+  rightMenu = Menu.buildFromTemplate([
+    {
+      label: 'label 1',
+      click: () => {},
+    },
+    { type: 'separator' },
+    {
+      label: 'label 2',
+      click: () => {},
+    },
+  ]);
+
+  mainWindow.webContents.on('context-menu', (event, params) => {
+    rightMenu.popup(mainWindow);
+  });
+};
+
+const setApplicationMenu = () => {
+  const template = [
+    {
+      label: 'Tool',
+      submenu: [
+        {
+          label: 'Reload',
+          accelerator: 'CmdOrCtrl+R',
+          role: 'reload',
+        },
+        {
+          label: 'Toggle Developer Tools',
+          accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
+          role: 'toggledevtools',
+        },
+        { type: 'separator' },
+        {
+          label: 'Toggle Full Screen',
+          accelerator: process.platform === 'darwin' ? 'Ctrl+Command+F' : 'F11',
+          role: 'togglefullscreen',
+        },
+      ],
+    },
+    {
+      label: 'Help',
+      submenu: [
+        {
+          label: 'Learn More',
+          click(menuItem, browserWindow, event) {
+            shell.openExternal('http://electron.atom.io');
+          },
+        },
+        {
+          label: 'Services',
+          submenu: [],
+        },
+      ],
+    },
+  ];
+
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
+};
+
 const checkForUpdate = () => {
   // 当开始检查更新的时候触发
   autoUpdater.on('checking-for-update', () => {});
@@ -138,17 +195,7 @@ const checkForUpdate = () => {
   });
   // 更新进度
   autoUpdater.on('download-progress', progressObj => {
-    let log_message =
-      'Download speed: ' +
-      progressObj.bytesPerSecond +
-      ' - Downloaded ' +
-      progressObj.percent +
-      '%' +
-      ' (' +
-      progressObj.transferred +
-      '/' +
-      progressObj.total +
-      ')';
+    // 'Download speed: ' + progressObj.bytesPerSecond + ' - Downloaded ' + progressObj.percent + '%' + ' (' + progressObj.transferred + '/' + progressObj.total + ')';
     // 下载进度显示在任务栏的进度条
     mainWindow.setProgressBar(progressObj.percent / 100);
   });
