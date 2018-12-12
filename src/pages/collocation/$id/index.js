@@ -8,10 +8,12 @@ import ImgAddTool from '../../../components/ImgAddTool';
 @connect(({ collocation, loading }) => ({ collocation, loading }))
 class index extends Component {
   componentDidMount() {
-    this.getData({
-      orderBy: 'recommend',
-      page: 1,
-    });
+    if(this.props.history.action!=='POP'){
+      this.getData({
+        orderBy: 'recommend',
+        page: 1,
+      });
+    }
     window.addEventListener('scroll', this.handleScroll);
   }
 
