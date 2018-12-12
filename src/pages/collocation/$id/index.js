@@ -8,7 +8,7 @@ import ImgAddTool from '../../../components/ImgAddTool';
 @connect(({ collocation, loading }) => ({ collocation, loading }))
 class index extends Component {
   componentDidMount() {
-    if(this.props.history.action!=='POP'){
+    if (!(this.props.history.action === 'POP' && this.props.collocation.classificationsList.data)) {
       this.getData({
         orderBy: 'recommend',
         page: 1,

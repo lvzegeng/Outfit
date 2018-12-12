@@ -41,7 +41,7 @@
     "*.{js,jsx}": ["eslint --fix", "git add"]
   },
   "build": {
-    "productName": "ElectronReact",
+    "productName": "Outfit",
     "appId": "org.develar.ElectronReact",
     "files": ["dist/", "node_modules/", "src/main/", "package.json"],
     "publish": [
